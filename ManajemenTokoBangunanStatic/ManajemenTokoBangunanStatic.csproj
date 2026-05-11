@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>ManajemenTokoBangunanStatic</RootNamespace>
+    <AssemblyName>ManajemenTokoBangunanStatic</AssemblyName>
+    <Nullable>disable</Nullable>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <!-- MSTest: agar unit test bisa dijalankan dari dalam project ini -->
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestAdapter"   Version="3.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+  </ItemGroup>
+
+</Project>

@@ -19,7 +19,7 @@ using ManajemenTokoBangunanStatic.Models;
 namespace ManajemenTokoBangunanStatic.Services
 {
     // Status stok yang mungkin
-    public enum StatusStok { Aman, HampirHabis, Habis }
+    public enum StatusStok { Aman, HampirHabis, Habis, tidakvalid }
 
     // Event yang bisa mengubah status
     public enum EventStok { StokBertambah, StokBerkurang }
@@ -60,6 +60,7 @@ namespace ManajemenTokoBangunanStatic.Services
         /// <summary>Hitung status stok langsung dari data barang.</summary>
         public static StatusStok HitungDariBarang(Barang b)
         {
+            if (b == null) return StatusStok.tidakvalid;
             if (b.Stok == 0)             return StatusStok.Habis;
             if (b.Stok <= b.StokMinimum) return StatusStok.HampirHabis;
             return StatusStok.Aman;

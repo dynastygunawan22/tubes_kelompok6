@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Kuliah\\Semester 4\\Konstruksi Perangkat Lunak\\uts\\ManajemenTokoBangunanStatic\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}|ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic.csproj|d:\\kuliah\\semester 4\\konstruksi perangkat lunak\\uts\\manajementokobangunanstatic\\manajementokobangunanstatic\\services\\automatastok.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}|ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic.csproj|solutionrelative:manajementokobangunanstatic\\services\\automatastok.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}|ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic.csproj|d:\\kuliah\\semester 4\\konstruksi perangkat lunak\\uts\\manajementokobangunanstatic\\manajementokobangunanstatic\\models\\barang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}|ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic.csproj|solutionrelative:manajementokobangunanstatic\\models\\barang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AutomataStok.cs",
+              "DocumentMoniker": "D:\\Kuliah\\Semester 4\\Konstruksi Perangkat Lunak\\uts\\ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic\\Services\\AutomataStok.cs",
+              "RelativeDocumentMoniker": "ManajemenTokoBangunanStatic\\Services\\AutomataStok.cs",
+              "ToolTip": "D:\\Kuliah\\Semester 4\\Konstruksi Perangkat Lunak\\uts\\ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic\\Services\\AutomataStok.cs",
+              "RelativeToolTip": "ManajemenTokoBangunanStatic\\Services\\AutomataStok.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-18T17:44:05.519Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Barang.cs",
+              "DocumentMoniker": "D:\\Kuliah\\Semester 4\\Konstruksi Perangkat Lunak\\uts\\ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic\\Models\\Barang.cs",
+              "RelativeDocumentMoniker": "ManajemenTokoBangunanStatic\\Models\\Barang.cs",
+              "ToolTip": "D:\\Kuliah\\Semester 4\\Konstruksi Perangkat Lunak\\uts\\ManajemenTokoBangunanStatic\\ManajemenTokoBangunanStatic\\Models\\Barang.cs",
+              "RelativeToolTip": "ManajemenTokoBangunanStatic\\Models\\Barang.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-18T17:41:10.482Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

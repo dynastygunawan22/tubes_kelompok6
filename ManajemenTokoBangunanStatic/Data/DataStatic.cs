@@ -6,34 +6,38 @@
 using System;
 using System.Collections.Generic;
 using ManajemenTokoBangunanStatic.Models;
+using ManajemenTokoBangunanStatic.Services;
 
 namespace ManajemenTokoBangunanStatic.Data
 {
+    // Pusat data aplikasi
+    // ALUR:
+    // barang/transaksi disimpan di List<T>
+    // semua form baca dari sini
     public static class DataStatic
     {
-        public static List<Barang>    DaftarBarang    { get; } = new List<Barang>();
+        public static List<Barang> DaftarBarang { get; } = new List<Barang>();
         public static List<Transaksi> DaftarTransaksi { get; } = new List<Transaksi>();
 
-        private static int _idBarang    = 1;
+        private static int _idBarang = 1;
         private static int _idTransaksi = 1;
 
         static DataStatic()
         {
-            // Data sample awal
-            TambahBarang(new Barang { Kode="SNR001", Nama="Semen Portland 40kg", Kategori="Semen",    Satuan="Sak",    Stok=150,  StokMinimum=20,  HargaBeli=55000,  HargaJual=65000  });
-            TambahBarang(new Barang { Kode="PSR001", Nama="Pasir Halus",          Kategori="Material", Satuan="Kubik",  Stok=30,   StokMinimum=5,   HargaBeli=180000, HargaJual=220000 });
-            TambahBarang(new Barang { Kode="BTN001", Nama="Batu Bata Merah",      Kategori="Material", Satuan="Buah",   Stok=5000, StokMinimum=500, HargaBeli=800,    HargaJual=1000   });
-            TambahBarang(new Barang { Kode="BSI001", Nama="Besi Beton 10mm",      Kategori="Besi",     Satuan="Batang", Stok=8,    StokMinimum=10,  HargaBeli=75000,  HargaJual=90000  });
-            TambahBarang(new Barang { Kode="CAT001", Nama="Cat Tembok Putih 25kg",Kategori="Cat",      Satuan="Kaleng", Stok=25,   StokMinimum=5,   HargaBeli=250000, HargaJual=300000 });
-            TambahBarang(new Barang { Kode="PPA001", Nama="Pipa PVC 4 inch",      Kategori="Pipa",     Satuan="Batang", Stok=3,    StokMinimum=10,  HargaBeli=55000,  HargaJual=70000  });
-            TambahBarang(new Barang { Kode="KRM001", Nama="Keramik 40x40 Putih",  Kategori="Keramik",  Satuan="Dus",    Stok=60,   StokMinimum=10,  HargaBeli=85000,  HargaJual=110000 });
+            // REVISI:
+            // sample data dibuat lewat constructor agar DbC constructor ikut jalan
+            TambahBarang(new Barang("SNR001", "Semen Portland 40kg", "Semen", "Sak", 150, 20, 55000, 65000));
+            TambahBarang(new Barang("PSR001", "Pasir Halus", "Material", "Kubik", 30, 5, 180000, 220000));
+            TambahBarang(new Barang("BTN001", "Batu Bata Merah", "Material", "Buah", 5000, 500, 800, 1000));
+            TambahBarang(new Barang("BSI001", "Besi Beton 10mm", "Besi", "Batang", 8, 10, 75000, 90000));
+            TambahBarang(new Barang("CAT001", "Cat Tembok Putih 25kg", "Cat", "Kaleng", 25, 5, 250000, 300000));
+            TambahBarang(new Barang("PPA001", "Pipa PVC 4 inch", "Pipa", "Batang", 3, 10, 55000, 70000));
+            TambahBarang(new Barang("KRM001", "Keramik 40x40 Putih", "Keramik", "Dus", 60, 10, 85000, 110000));
 
-            // Transaksi sample
-            CatatTransaksi(new Transaksi { KodeBarang="SNR001", NamaBarang="Semen Portland 40kg", Jenis=JenisTransaksi.Masuk,  Jumlah=50,  Harga=55000, Tanggal=DateTime.Now.AddDays(-3), Operator="Admin", Keterangan="Stok awal" });
-            CatatTransaksi(new Transaksi { KodeBarang="BTN001", NamaBarang="Batu Bata Merah",     Jenis=JenisTransaksi.Keluar, Jumlah=200, Harga=1000,  Tanggal=DateTime.Now.AddDays(-1), Operator="Admin", Keterangan="Penjualan Pak Budi" });
+            CatatTransaksi(new Transaksi("SNR001", "Semen Portland 40kg", JenisTransaksi.Masuk, 50, 55000, "Admin", "Stok awal", DateTime.Now.AddDays(-3)));
+            CatatTransaksi(new Transaksi("BTN001", "Batu Bata Merah", JenisTransaksi.Keluar, 200, 1000, "Admin", "Penjualan Pak Budi", DateTime.Now.AddDays(-1)));
         }
 
-        // ---- CRUD Barang ----
         public static void TambahBarang(Barang b)
         {
             b.ValidasiKontrak(); // DbC: wajib valid sebelum disimpan
@@ -46,9 +50,16 @@ namespace ManajemenTokoBangunanStatic.Data
             b.ValidasiKontrak(); // DbC
             var lama = DaftarBarang.Find(x => x.Id == b.Id);
             if (lama == null) return false;
-            lama.Kode=b.Kode; lama.Nama=b.Nama; lama.Kategori=b.Kategori;
-            lama.Satuan=b.Satuan; lama.Stok=b.Stok; lama.StokMinimum=b.StokMinimum;
-            lama.HargaBeli=b.HargaBeli; lama.HargaJual=b.HargaJual; lama.Keterangan=b.Keterangan;
+
+            lama.Kode = b.Kode;
+            lama.Nama = b.Nama;
+            lama.Kategori = b.Kategori;
+            lama.Satuan = b.Satuan;
+            lama.Stok = b.Stok;
+            lama.StokMinimum = b.StokMinimum;
+            lama.HargaBeli = b.HargaBeli;
+            lama.HargaJual = b.HargaJual;
+            lama.Keterangan = b.Keterangan;
             return true;
         }
 
@@ -56,11 +67,11 @@ namespace ManajemenTokoBangunanStatic.Data
         {
             var b = DaftarBarang.Find(x => x.Id == id);
             if (b == null) return false;
+
             DaftarBarang.Remove(b);
             return true;
         }
 
-        // ---- Transaksi ----
         public static void CatatTransaksi(Transaksi t)
         {
             t.ValidasiKontrak(); // DbC
@@ -68,25 +79,29 @@ namespace ManajemenTokoBangunanStatic.Data
             if (t.Tanggal == default) t.Tanggal = DateTime.Now;
 
             var barang = DaftarBarang.Find(b => b.Kode == t.KodeBarang);
-            if (barang != null)
+            if (barang == null)
+                throw new InvalidOperationException($"Barang dengan kode {t.KodeBarang} tidak ditemukan.");
+
+            if (t.Jenis == JenisTransaksi.Masuk)
             {
-                if (t.Jenis == JenisTransaksi.Masuk)
-                    barang.Stok += t.Jumlah;
-                else
-                {
-                    // DbC: stok tidak boleh jadi negatif
-                    if (barang.Stok < t.Jumlah)
-                        throw new InvalidOperationException($"Stok tidak cukup. Stok saat ini: {barang.Stok}");
-                    barang.Stok -= t.Jumlah;
-                }
+                barang.Stok += t.Jumlah;
             }
+            else
+            {
+                // DbC tambahan: stok tidak boleh jadi negatif
+                if (barang.Stok < t.Jumlah)
+                    throw new InvalidOperationException($"Stok tidak cukup. Stok saat ini: {barang.Stok}");
+
+                barang.Stok -= t.Jumlah;
+            }
+
             DaftarTransaksi.Add(t);
         }
 
-        // Helper ComboBox
         public static List<string> GetKategori() =>
-            new List<string> { "Semen","Material","Besi","Cat","Pipa","Keramik","Kayu","Lainnya" };
+            new List<string> { "Semen", "Material", "Besi", "Cat", "Pipa", "Keramik", "Kayu", "Lainnya" };
+
         public static List<string> GetSatuan() =>
-            new List<string> { "Sak","Kubik","Buah","Batang","Kaleng","Dus","Lembar","Kg","Liter" };
+            new List<string> { "Sak", "Kubik", "Buah", "Batang", "Kaleng", "Dus", "Lembar", "Kg", "Liter" };
     }
 }

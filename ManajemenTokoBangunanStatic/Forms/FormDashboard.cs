@@ -4,16 +4,21 @@
 // TEKNIK: Automata — AutomataStok.HitungDariBarang() dipakai
 //         untuk menampilkan status stok tiap barang di tabel.
 //         Code Reuse — UIHelper.WarnaStok(), UIHelper.LabelStatus()
+//         Observer Pattern — FormDashboard implement IStokObserver
+//         untuk auto-refresh ketika stok barang berubah.
 // ============================================================
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using ManajemenTokoBangunanStatic.Data;
+using ManajemenTokoBangunanStatic.Models;
 using ManajemenTokoBangunanStatic.Services;
 
 namespace ManajemenTokoBangunanStatic.Forms
 {
-    public partial class FormDashboard : Form
+    // Observer Pattern: FormDashboard implement IStokObserver
+    // sehingga otomatis di-refresh ketika stok berubah
+    public partial class FormDashboard : Form, IStokObserver
     {
         public FormDashboard()
         {
@@ -21,7 +26,27 @@ namespace ManajemenTokoBangunanStatic.Forms
             this.Text = "Dashboard";
         }
 
-        private void FormDashboard_Load(object sender, EventArgs e) => MuatData();
+        private void FormDashboard_Load(object sender, EventArgs e)
+        {
+            // Observer Pattern: daftarkan diri sebagai observer
+            StokNotifier.Instance.Daftar(this);
+            MuatData();
+        }
+
+        /// <summary>
+        /// Observer Pattern: callback ketika stok barang berubah.
+        /// Auto-refresh data dashboard tanpa perlu klik refresh manual.
+        /// </summary>
+        public void OnStokBerubah(Barang barang, string pesan)
+        {
+            // Pastikan update UI dilakukan di UI thread
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => OnStokBerubah(barang, pesan)));
+                return;
+            }
+            MuatData();
+        }
 
         public void MuatData()
         {
@@ -59,5 +84,15 @@ namespace ManajemenTokoBangunanStatic.Forms
         }
 
         private void btnRefresh_Click(object sender, EventArgs e) => MuatData();
+
+        /// <summary>
+        /// Observer Pattern: hapus observer saat form ditutup
+        /// agar tidak ada memory leak.
+        /// </summary>
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            StokNotifier.Instance.Hapus(this);
+            base.OnFormClosed(e);
+        }
     }
 }

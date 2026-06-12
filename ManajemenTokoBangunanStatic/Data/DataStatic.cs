@@ -51,6 +51,12 @@ namespace ManajemenTokoBangunanStatic.Data
             var lama = DaftarBarang.Find(x => x.Id == b.Id);
             if (lama == null) return false;
 
+            // Secured Code: validasi perubahan harga menggunakan PriceGuard
+            if (lama.HargaBeli != b.HargaBeli)
+                PriceGuard.ValidasiPerubahanHarga(lama.HargaBeli, b.HargaBeli, b.Nama, "Harga Beli");
+            if (lama.HargaJual != b.HargaJual)
+                PriceGuard.ValidasiPerubahanHarga(lama.HargaJual, b.HargaJual, b.Nama, "Harga Jual");
+
             lama.Kode = b.Kode;
             lama.Nama = b.Nama;
             lama.Kategori = b.Kategori;
@@ -78,6 +84,26 @@ namespace ManajemenTokoBangunanStatic.Data
             t.Id = _idTransaksi++;
             if (t.Tanggal == default) t.Tanggal = DateTime.Now;
 
+            // Clean Code (SRP): logika update stok dipisah ke method sendiri
+            UpdateStokBarang(t);
+
+            DaftarTransaksi.Add(t);
+
+            // Observer Pattern: notifikasi jika stok rendah setelah transaksi
+            var barang = DaftarBarang.Find(b => b.Kode == t.KodeBarang);
+            if (barang != null && barang.StokHampirHabis)
+            {
+                StokNotifier.Instance.NotifikasiStokBerubah(barang,
+                    $"Stok {barang.Nama} rendah! Sisa: {barang.Stok} {barang.Satuan}");
+            }
+        }
+
+        /// <summary>
+        /// Clean Code (SRP): method khusus untuk update stok barang berdasarkan transaksi.
+        /// Dipisah dari CatatTransaksi() agar setiap method punya satu tanggung jawab.
+        /// </summary>
+        private static void UpdateStokBarang(Transaksi t)
+        {
             var barang = DaftarBarang.Find(b => b.Kode == t.KodeBarang);
             if (barang == null)
                 throw new InvalidOperationException($"Barang dengan kode {t.KodeBarang} tidak ditemukan.");
@@ -94,14 +120,14 @@ namespace ManajemenTokoBangunanStatic.Data
 
                 barang.Stok -= t.Jumlah;
             }
-
-            DaftarTransaksi.Add(t);
         }
 
-        public static List<string> GetKategori() =>
+        // Clean Code (Penamaan): GetKategori → GetDaftarKategori (lebih deskriptif)
+        public static List<string> GetDaftarKategori() =>
             new List<string> { "Semen", "Material", "Besi", "Cat", "Pipa", "Keramik", "Kayu", "Lainnya" };
 
-        public static List<string> GetSatuan() =>
+        // Clean Code (Penamaan): GetSatuan → GetDaftarSatuan (lebih deskriptif)
+        public static List<string> GetDaftarSatuan() =>
             new List<string> { "Sak", "Kubik", "Buah", "Batang", "Kaleng", "Dus", "Lembar", "Kg", "Liter" };
     }
 }

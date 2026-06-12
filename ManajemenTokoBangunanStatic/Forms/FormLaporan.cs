@@ -5,6 +5,7 @@
 //         baris per kategori tanpa if-else.
 //         Code Reuse — UIHelper.Rupiah(), UIHelper.StyleDGV(),
 //         UIHelper.LabelStatus(), UIHelper.WarnaStok()
+//         Singleton — DataStore.Instance dipakai untuk akses data
 // ============================================================
 using System;
 using System.Collections.Generic;
@@ -27,10 +28,13 @@ namespace ManajemenTokoBangunanStatic.Forms
 
         public void MuatLaporan()
         {
+            // Singleton Pattern: akses data melalui DataStore.Instance
+            var store = DataStore.Instance;
+
             // ---- Tabel ringkasan per kategori ----
             dgvKategori.Rows.Clear();
             var perKategori = new Dictionary<string, int>();
-            foreach (var b in DataStatic.DaftarBarang)
+            foreach (var b in store.GetSemuaBarang())
             {
                 if (!perKategori.ContainsKey(b.Kategori)) perKategori[b.Kategori] = 0;
                 perKategori[b.Kategori] += b.Stok;
@@ -45,7 +49,7 @@ namespace ManajemenTokoBangunanStatic.Forms
             // ---- Tabel detail semua barang ----
             dgvDetail.Rows.Clear();
             decimal grandTotal = 0;
-            foreach (var b in DataStatic.DaftarBarang)
+            foreach (var b in store.GetSemuaBarang())
             {
                 decimal nilaiStok = b.Stok * b.HargaBeli;
                 grandTotal += nilaiStok;

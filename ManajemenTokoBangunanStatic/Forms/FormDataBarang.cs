@@ -6,6 +6,8 @@
 //         Table-Driven — TableKategori.GetWarna() untuk warna baris.
 //         Code Reuse — UIHelper.StyleDGV(), UIHelper.WarnaStok()
 //         DbC — ValidasiKontrak() sebelum simpan
+//         Secured Code — InputValidator validasi input user
+//         Secured Code — PriceGuard proteksi harga
 // ============================================================
 using System;
 using System.Drawing;
@@ -29,10 +31,11 @@ namespace ManajemenTokoBangunanStatic.Forms
 
         private void FormDataBarang_Load(object sender, EventArgs e)
         {
-            cmbKategori.DataSource = DataStatic.GetKategori();
-            cmbSatuan.DataSource   = DataStatic.GetSatuan();
+            // Clean Code: penamaan method lebih deskriptif
+            cmbKategori.DataSource = DataStatic.GetDaftarKategori();
+            cmbSatuan.DataSource   = DataStatic.GetDaftarSatuan();
             MuatBarang();
-            SetEditMode(false);
+            AturModeEdit(false);
         }
 
         public void MuatBarang(string filter = "")
@@ -67,13 +70,13 @@ namespace ManajemenTokoBangunanStatic.Forms
         private void btnTambah_Click(object sender, EventArgs e)
         {
             _modeEdit = false; _idDipilih = -1;
-            BersihkanForm(); SetEditMode(true); txtKode.Focus();
+            ResetFormInput(); AturModeEdit(true); txtKode.Focus();
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (_idDipilih < 0) { MessageBox.Show("Pilih barang terlebih dahulu.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
-            _modeEdit = true; SetEditMode(true);
+            _modeEdit = true; AturModeEdit(true);
         }
 
         private void btnHapus_Click(object sender, EventArgs e)
@@ -82,7 +85,7 @@ namespace ManajemenTokoBangunanStatic.Forms
             if (MessageBox.Show("Hapus barang ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 DataStatic.HapusBarang(_idDipilih);
-                BersihkanForm(); MuatBarang(); _idDipilih = -1;
+                ResetFormInput(); MuatBarang(); _idDipilih = -1;
                 MessageBox.Show("Barang berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -91,34 +94,40 @@ namespace ManajemenTokoBangunanStatic.Forms
         {
             try
             {
+                // Secured Code: validasi input user sebelum proses
+                string kode = InputValidator.ValidasiKode(txtKode.Text);
+                string nama = InputValidator.ValidasiTeks(txtNama.Text, "Nama barang", 100);
+                string keterangan = InputValidator.ValidasiKeterangan(txtKet.Text, 200);
+
                 var b = new Barang
                 {
                     Id          = _modeEdit ? _idDipilih : 0,
-                    Kode        = txtKode.Text.Trim(),
-                    Nama        = txtNama.Text.Trim(),
+                    Kode        = kode,
+                    Nama        = nama,
                     Kategori    = cmbKategori.SelectedItem?.ToString() ?? "",
                     Satuan      = cmbSatuan.SelectedItem?.ToString() ?? "",
                     Stok        = (int)numStok.Value,
                     StokMinimum = (int)numMin.Value,
                     HargaBeli   = numHBeli.Value,
                     HargaJual   = numHJual.Value,
-                    Keterangan  = txtKet.Text.Trim()
+                    Keterangan  = keterangan
                 };
                 // DbC: ValidasiKontrak dipanggil di dalam TambahBarang/UpdateBarang
+                // Secured Code: PriceGuard dipanggil di dalam UpdateBarang
                 if (_modeEdit) DataStatic.UpdateBarang(b);
                 else           DataStatic.TambahBarang(b);
 
-                SetEditMode(false); MuatBarang();
+                AturModeEdit(false); MuatBarang();
                 MessageBox.Show("Data berhasil disimpan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (ArgumentException ex)
             {
-                // DbC: tampilkan pesan pelanggaran kontrak
+                // DbC + Secured Code: tampilkan pesan pelanggaran
                 MessageBox.Show($"Validasi gagal:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
-        private void btnBatal_Click(object sender, EventArgs e) { SetEditMode(false); BersihkanForm(); }
+        private void btnBatal_Click(object sender, EventArgs e) { AturModeEdit(false); ResetFormInput(); }
 
         private void dgvBarang_SelectionChanged(object sender, EventArgs e)
         {
@@ -132,7 +141,8 @@ namespace ManajemenTokoBangunanStatic.Forms
             numHBeli.Value = b.HargaBeli; numHJual.Value = b.HargaJual;
         }
 
-        private void SetEditMode(bool edit)
+        // Clean Code (Penamaan): SetEditMode → AturModeEdit (konsisten bahasa Indonesia)
+        private void AturModeEdit(bool edit)
         {
             txtKode.ReadOnly = txtNama.ReadOnly = txtKet.ReadOnly = !edit;
             cmbKategori.Enabled = cmbSatuan.Enabled = edit;
@@ -142,7 +152,8 @@ namespace ManajemenTokoBangunanStatic.Forms
             panelForm.BackColor = edit ? Color.FromArgb(235, 245, 255) : Color.FromArgb(248, 249, 250);
         }
 
-        private void BersihkanForm()
+        // Clean Code (Penamaan): BersihkanForm → ResetFormInput (lebih spesifik)
+        private void ResetFormInput()
         {
             txtKode.Text = txtNama.Text = txtKet.Text = "";
             numStok.Value = numMin.Value = numHBeli.Value = numHJual.Value = 0;

@@ -5,6 +5,7 @@
 //         barang yang dipilih, berubah real-time.
 //         DbC — CatatTransaksi() memanggil ValidasiKontrak().
 //         Code Reuse — UIHelper.Rupiah() untuk format harga.
+//         Secured Code — InputValidator untuk validasi input user.
 // ============================================================
 using System;
 using System.Drawing;
@@ -86,6 +87,10 @@ namespace ManajemenTokoBangunanStatic.Forms
 
             try
             {
+                // Secured Code: validasi input user sebelum proses
+                string keterangan = InputValidator.ValidasiKeterangan(txtKet.Text, 200);
+                string namaOperator = InputValidator.ValidasiNamaOperator(txtOperator.Text);
+
                 var t = new Transaksi
                 {
                     KodeBarang = b.Kode,
@@ -93,9 +98,9 @@ namespace ManajemenTokoBangunanStatic.Forms
                     Jenis      = _jenis,
                     Jumlah     = (int)numJumlah.Value,
                     Harga      = numHarga.Value,
-                    Keterangan = txtKet.Text.Trim(),
+                    Keterangan = keterangan,
                     Tanggal    = DateTime.Now,
-                    Operator   = string.IsNullOrWhiteSpace(txtOperator.Text) ? "Admin" : txtOperator.Text.Trim()
+                    Operator   = namaOperator
                 };
 
                 // DbC: ValidasiKontrak + cek stok ada di CatatTransaksi
@@ -108,7 +113,7 @@ namespace ManajemenTokoBangunanStatic.Forms
             {
                 MessageBox.Show(ex.Message, "Stok Tidak Cukup", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (ArgumentException ex) // DbC pelanggaran
+            catch (ArgumentException ex) // DbC / Secured Code pelanggaran
             {
                 MessageBox.Show(ex.Message, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
